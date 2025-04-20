@@ -1,18 +1,38 @@
 from google.cloud import texttospeech
-from dotenv import load_dotenv
 import os
 from pydub import AudioSegment
 from pydub.playback import play
 import io
+from utils.credentials import GOOGLE_APPLICATION_CREDENTIALS
 
-# Load environment variables
-load_dotenv()
-google_cred = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+
+google_cred = GOOGLE_APPLICATION_CREDENTIALS
 if not google_cred or not os.path.exists(google_cred):
     raise FileNotFoundError(f"Credentials file not found: {google_cred}")
 
-# Initialize the Google Text-to-Speech client
-client = texttospeech.TextToSpeechClient()
+def get_client():
+    """Initialize Text-to-Speech client with proper credentials"""
+    try:
+        # Try using default credentials first
+        return texttospeech.TextToSpeechClient()
+    except Exception as e:
+        # If default credentials fail, try getting from environment variable
+        credentials_path = google_cred
+        if not credentials_path:
+            raise Exception("GOOGLE_APPLICATION_CREDENTIALS environment variable not set")
+        
+        if not os.path.exists(credentials_path):
+            raise FileNotFoundError(f"Credentials file not found at: {credentials_path}")
+        
+        # credentials = service_account.Credentials.from_service_account_file(credentials_path)
+        # return texttospeech.TextToSpeechClient(credentials=credentials)
+
+# Initialize the client using the function
+try:
+    client = get_client()
+except Exception as e:
+    print(f"Error initializing Text-to-Speech client: {e}")
+    raise
 
 def synthesize_and_stream_text_to_speech(text):
     """

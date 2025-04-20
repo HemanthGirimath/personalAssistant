@@ -1,12 +1,22 @@
 from utils.credentials import GITHUB_PERSONAL_ACCESS_TOKEN
-from github import Github
-from github import Auth
+from github import Github, Auth
+import sys
 
-githubAuth = GITHUB_PERSONAL_ACCESS_TOKEN
-auth = Auth.Token(githubAuth)
-g = Github(auth=auth)
-
-
+def initialize_github():
+    try:
+        if not GITHUB_PERSONAL_ACCESS_TOKEN:
+            raise ValueError("GitHub token is empty or not set")
+        
+        auth = Auth.Token(GITHUB_PERSONAL_ACCESS_TOKEN)
+        return Github(auth=auth)
+    except Exception as e:
+        print(f"GitHub initialization error: {str(e)}", file=sys.stderr)
+        raise
+# try:
+#     g = initialize_github()
+# except Exception as e:
+#     print(f"Failed to initialize GitHub client: {str(e)}", file=sys.stderr)
+#     sys.exit(1)
 
 def get_repo():
     "this function is used to get list of repo for the user{no need of username} "
@@ -37,7 +47,7 @@ def get_content_of_repo(repo_name):
         files.append(content_file)
     print(files)
     return files
-# get_content_of_repo("Coinbase-Clone")
+
 
 def create_newRepo(name,description, private=False ,has_issues=True, has_wiki=True, auto_init=True,):
     """

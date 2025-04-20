@@ -3,15 +3,30 @@ import uvicorn
 import json
 from typing import Dict, Any
 from features.github.githubAccess import get_repo, get_content_of_repo, create_newRepo
-
+from models.baseModule import ModelSelector
+from features.general.voiceInteractionBase import VoiceInteractionBase
 app = FastAPI()
+
 
 functionRegistry = {
     "get_repo": get_repo,
     "get_content_of_repo": get_content_of_repo,
     "create_newRepo": create_newRepo
 }
-
+model = ModelSelector()
+voice_interaction = VoiceInteractionBase(model)
+     
+@app.get("/try")
+async def hello(request:Request):
+    use_voice = True
+    if use_voice:
+        custom_prompt = """
+        Instructions: {user_input}
+        Please provide a simple and short answer.
+        """
+        result = await voice_interaction.process_voice_interaction(custom_prompt)
+        return(f"result : ${result}")
+    
 
 @app.post("/execute")
 async def execute_function(request: Request):
