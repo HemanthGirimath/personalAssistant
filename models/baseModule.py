@@ -7,8 +7,8 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_openai import ChatOpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
 from utils.credentials import openai_api_key, gemini_api_key
-class ModelSelector:
 
+class ModelSelector:
     def __init__(self):
         """Initialize with available models"""
         self.available_models = {}
@@ -16,8 +16,8 @@ class ModelSelector:
         # Initialize OpenAI models if API key is available
         if openai_api_key:
             try:
-                self.available_models["gpt-3.5-turbo"] = self._get_openai_model("gpt-3.5-turbo")
                 self.available_models["gpt-4"] = self._get_openai_model("gpt-4")
+                self.available_models["gpt-3.5-turbo"] = self._get_openai_model("gpt-3.5-turbo")
                 print("OpenAI models initialized successfully")
 
             except Exception as e:

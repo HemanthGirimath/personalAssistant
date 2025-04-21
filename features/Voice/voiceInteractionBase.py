@@ -1,0 +1,90 @@
+from speech.audioModule import AudioManager
+from langchain_core.output_parsers import StrOutputParser
+from features.agents.agentHandler import AgentHandler
+from langchain_core.messages import AIMessage
+class VoiceInteractionBase:
+    def __init__(self, model_selector=None):
+        """
+        Initialize voice interaction with optional model selector
+        """
+        self.audio_manager = AudioManager()
+        self.model_selector = model_selector
+        self.agent_selector = AgentHandler(model_selector)
+    
+    async def process_voice_interaction(self, custom_prompt_template=None):
+        """
+        Process a complete voice interaction cycle:
+        1. Listen for voice input
+        2. Convert to text
+        3. Process with model
+        4. Convert response to speech
+        """
+        try:
+            # Get voice input and convert to text
+            transcription = self.audio_manager.listenForCommand()
+            
+            if not transcription:
+                print("No transcription received.")
+                return None
+            
+            # Process with model
+            if custom_prompt_template:
+                response = self.model_selector.process_query(
+                    template=custom_prompt_template,
+                    user_input=transcription
+                )
+            else:
+                response = self.model_selector.process_query(transcription)
+            
+            # Convert response to speech
+            if response:
+                self.audio_manager.speakResponse(response)
+                
+            return response
+            
+        except Exception as e:
+            print(f"Error during voice interaction: {e}")
+            return None
+            
+        finally:
+            self.audio_manager.resumeListening()
+
+    async def process_agent_voice_interaction(self):
+        """
+        Process a complete voice interaction cycle:
+        1. Listen for voice input
+        2. Convert to text
+        3. Process with agent
+        4. Convert response to speech
+        """
+        try:
+            # Get voice input and convert to text
+            transcription = self.audio_manager.listenForCommand()
+            
+            if not transcription:
+                print("No transcription received.")
+                return None
+            # Process with agent
+            if transcription:
+                response = await self.agent_selector.process_query(
+                    text = transcription
+                )
+            if response:
+                messages = response
+                self.audio_manager.speakResponse(messages)
+            return messages
+        
+        except Exception as e:
+            print(f"Error during voice interaction: {e}")
+            return None
+            
+        finally:
+            self.audio_manager.resumeListening()
+
+
+
+
+    def cleanup(self):
+        """Cleanup voice interaction resources"""
+        if self.audio_manager:
+            self.audio_manager.cleanup()
