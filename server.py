@@ -1,6 +1,10 @@
 from fastapi import FastAPI, Request
 import uvicorn
 import json
+import signal
+import sys
+import threading
+import time
 from typing import Dict, Any
 from models.baseModule import ModelSelector
 from features.Voice.voiceInteractionBase import VoiceInteractionBase
@@ -77,5 +81,30 @@ async def get_history(conversation_id: str):
     #     }
     # return specs
 
-if __name__ == "__main__":
+def signal_handler(sig, frame):
+    print("\nShutting down server gracefully...")
+    sys.exit(0)
+
+def run_server():
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
+def main():
+    try:
+        # Register signal handler for graceful shutdown
+        signal.signal(signal.SIGINT, signal_handler)
+        
+        # Create server thread as daemon
+        server_thread = threading.Thread(target=run_server, daemon=True)
+        server_thread.start()
+        
+        # Keep main thread alive
+        while True:
+            time.sleep(1)
+            
+    except Exception as e:
+        print(f"Error: {e}")
+    finally:
+        print("Server shutdown complete")
+
+if __name__ == "__main__":
+    main()

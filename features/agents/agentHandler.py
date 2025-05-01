@@ -35,6 +35,7 @@ class RedisMessageStore:
 
 class AgentHandler:
     def __init__(self,model):
+        self.tracer = LangChainTracer(project_name ="personalAssistant")
         self.tools = [webSearchTool.get_search_tool()]
         self.model = model.bind_tools(self.tools)
         self.agent_executor = None
@@ -109,24 +110,21 @@ class AgentHandler:
         self.redis_client.delete(f"chat:{conversation_id}")
     
     # async def process_query(self, text: str, **kwargs):
-        """Process user query through the agent and stream responses"""
-        try:
-            for step in self.agent_executor.stream(
-                {"messages": [HumanMessage(content=text)]},
-                stream_mode="values",
-            ):
-                # Get only AI messages and their content
-                if isinstance(step["messages"][-1], AIMessage):
-                    message = step["messages"][-1]
-                    if message.content:
-                        print(f"Streaming AI Response: {message.content}")
-                        yield message.content
+    #     """Process user query through the agent and stream responses"""
+    #     try:
+    #         for step in self.agent_executor.stream(
+    #             {"messages": [HumanMessage(content=text)]},
+    #             stream_mode="values",
+    #         ):
+    #             # Get only AI messages and their content
+    #             if isinstance(step["messages"][-1], AIMessage):
+    #                 message = step["messages"][-1]
+    #                 if message.content:
+    #                     print(f"Streaming AI Response: {message.content}")
+    #                     yield message.content
                     
-        except Exception as e:
-            print(f"Error in process_query: {e}")
-            yield f"Error: {str(e)}"
+        # except Exception as e:
+        #     print(f"Error in process_query: {e}")
+        #     yield f"Error: {str(e)}"
 
-    def add_tool(self, tool):
-        """Add a new tool to the agent"""
-        pass
 
