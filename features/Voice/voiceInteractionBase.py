@@ -80,7 +80,7 @@ class VoiceInteractionBase:
                     response_text = response.get("response", "")
                     # Send only the text to TTS
                     # self.audio_manager.speakResponse(response_text)
-                    asyncio.create_task(self.audio_manager.speakResponse_async(response_text))
+                    asyncio.create_task(self.audio_manager.speakResponse(response_text))
                     return response  # Return full response object for API
             
             return None

@@ -6,6 +6,8 @@ from models.baseModule import ModelSelector
 from features.Voice.voiceInteractionBase import VoiceInteractionBase
 import uuid
 
+import uuid
+
 app = FastAPI()
 model = ModelSelector()
 voice_interaction = VoiceInteractionBase(model.current_model)
