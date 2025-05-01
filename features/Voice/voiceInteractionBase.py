@@ -2,6 +2,8 @@ from speech.audioModule import AudioManager
 from langchain_core.output_parsers import StrOutputParser
 from features.agents.agentHandler import AgentHandler
 from langchain_core.messages import AIMessage
+import asyncio
+
 class VoiceInteractionBase:
     def __init__(self, model_selector=None):
         """
@@ -34,13 +36,12 @@ class VoiceInteractionBase:
                     user_input=transcription
                 )
             else:
-                response = self.model_selector.process_query(transcription)
-            
+                Response = self.model_selector.process_query(transcription)
+                return Response
             # Convert response to speech
             if response:
                 self.audio_manager.speakResponse(response)
-                
-            return response
+                return response
             
         except Exception as e:
             print(f"Error during voice interaction: {e}")
@@ -49,7 +50,9 @@ class VoiceInteractionBase:
         finally:
             self.audio_manager.resumeListening()
 
-    async def process_agent_voice_interaction(self):
+
+       
+    async def process_agent_voice_interaction(self, conversation_id:str = None):
         """
         Process a complete voice interaction cycle:
         1. Listen for voice input
@@ -64,15 +67,23 @@ class VoiceInteractionBase:
             if not transcription:
                 print("No transcription received.")
                 return None
+            
             # Process with agent
             if transcription:
                 response = await self.agent_selector.process_query(
-                    text = transcription
+                    text=transcription,
+                    conversation_id=conversation_id
                 )
-            if response:
-                messages = response
-                self.audio_manager.speakResponse(messages)
-            return messages
+
+                if response and isinstance(response, dict):
+                    # Extract just the response text from the dictionary
+                    response_text = response.get("response", "")
+                    # Send only the text to TTS
+                    # self.audio_manager.speakResponse(response_text)
+                    asyncio.create_task(self.audio_manager.speakResponse(response_text))
+                    return response  # Return full response object for API
+            
+            return None
         
         except Exception as e:
             print(f"Error during voice interaction: {e}")
@@ -80,8 +91,6 @@ class VoiceInteractionBase:
             
         finally:
             self.audio_manager.resumeListening()
-
-
 
 
     def cleanup(self):
