@@ -7,5 +7,8 @@ class webSearchTool:
         """Returns an initialized TavilySearchResult"""
         return TavilySearchResults(
             max_results=2,
-            api_key=TAVILY_API_KEY
+            api_key=TAVILY_API_KEY,
+            search_depth="advanced",
+            topic = "general",
+            include_answer = True
         )

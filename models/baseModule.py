@@ -59,12 +59,12 @@ class ModelSelector:
         """Return list of available models"""
         return list(self.available_models.keys())
     
-    def set_model(self, model_name):
+    def set_model(self, model_name:str):
         """Set current model to use"""
         if model_name in self.available_models:
             self.current_model_name = model_name
             self.current_model = self.available_models[model_name]
-            return f"Model changed to {model_name}"
+            return self.current_model
         else:
             return f"Model {model_name} not found. Available models: {', '.join(self.list_available_models())}"
     
