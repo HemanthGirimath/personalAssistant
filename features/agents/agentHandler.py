@@ -64,6 +64,8 @@ class AgentHandler:
                 - For specific technical information not in your knowledge base
                 - When requested to look up something specific
                 - When you need to verify information
+                - Stop whole process if tools gives errors(maxTrys=2) and say tool error
+
 
                 2. **When NOT to use tools:**
                 - For simple factual questions you can answer directly

@@ -15,11 +15,19 @@ app = FastAPI()
 model = ModelSelector()
 github = GitHubTools()
 
-voice_interaction = VoiceInteractionBase(model.set_model("gemini-2.0-flash"))
+# voice_interaction = VoiceInteractionBase(model.set_model("gemini-2.0-flash"))
 
 
 @app.get("/agent")
-async def hello(request: Request, conversation_id: str = None):
+async def hello(request: Request, conversation_id: str = None,mode:str="general"):
+    if mode == "general":
+        voice_interaction = VoiceInteractionBase(model.set_model("gpt-3.5-turbo"))
+    else: 
+        mode == "github"
+        voice_interaction = VoiceInteractionBase(model.set_model("gemini-2.0-flash"))
+        
+
+
     use_voice = True
     if use_voice:
         # Generate new conversation_id if not provided
