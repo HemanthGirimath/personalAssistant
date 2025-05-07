@@ -111,7 +111,7 @@ class FileTools:
                         "--src-dir",
                         "--import-alias", "@/*",
                         "--use-npm",
-                        "--no-git",
+                        "--git",
                         "--yes"  # Skip all prompts
                     ])
                 
