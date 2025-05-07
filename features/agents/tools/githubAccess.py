@@ -58,7 +58,8 @@ class GitHubTools:
                 "name": file_content.name,
                 "path": file_content.path,
                 "type": file_content.type,
-                "url": file_content.html_url
+                "url": file_content.html_url,
+                "content": file_content.content
             })
         return files
 
@@ -118,3 +119,4 @@ github_tools = [
         args_schema=CreateRepoSchema
     )
 ]
+

@@ -10,23 +10,40 @@ from models.baseModule import ModelSelector
 from features.Voice.voiceInteractionBase import VoiceInteractionBase
 from features.agents.tools.githubAccess import GitHubTools
 import uuid
+from utils.promptLoader import loadPrompt
+
 
 app = FastAPI()
-model = ModelSelector()
-github = GitHubTools()
 
-# voice_interaction = VoiceInteractionBase(model.set_model("gemini-2.0-flash"))
+# Remove global instantiations
+# model = ModelSelector()
+# github = GitHubTools()
 
+# Create holder for lazy initialization
+_model = None
+_github = None
+
+def get_model():
+    global _model
+    if _model is None:
+        _model = ModelSelector()
+    return _model
+
+def get_github():
+    global _github
+    if _github is None:
+        _github = GitHubTools()
+    return _github
 
 @app.get("/agent")
-async def hello(request: Request, conversation_id: str = None,mode:str="general"):
+async def hello(request: Request, conversation_id: str = None, mode:str="general"):
+    model = get_model()
     if mode == "general":
+        generalPromot = loadPrompt("githubMode.txt")
         voice_interaction = VoiceInteractionBase(model.set_model("gpt-3.5-turbo"))
-    else: 
-        mode == "github"
+    else:
+        githubPrompt = loadPrompt("githubMode.txt")
         voice_interaction = VoiceInteractionBase(model.set_model("gemini-2.0-flash"))
-        
-
 
     use_voice = True
     if use_voice:
@@ -37,7 +54,7 @@ async def hello(request: Request, conversation_id: str = None,mode:str="general"
         result = await voice_interaction.process_agent_voice_interaction(
             conversation_id=conversation_id
         )
-        print("server object : ", result)
+        print("Agent Response : ", result["response"], end='\n\n')
         
         # Return both result and conversation_id
         return {
@@ -47,6 +64,7 @@ async def hello(request: Request, conversation_id: str = None,mode:str="general"
     
 @app.get("/repo")
 async def getAllRepo(request:Request):
+    github = get_github()  # Lazy load GitHub when needed
     ressult = github.get_repo()
     return ressult
     

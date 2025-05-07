@@ -16,6 +16,7 @@ import uuid
 from typing import List, Dict, Optional
 import time
 
+
 class RedisMessageStore:
     def __init__(self):
         self.redis_client = redis.Redis(
@@ -36,10 +37,10 @@ class RedisMessageStore:
         return json.loads(messages) if messages else []
 
 class AgentHandler:
-    def __init__(self,model):
+    def __init__(self,model,prompt):
+        self.prompt = prompt
         self.tracer = LangChainTracer(project_name ="personalAssistant")
         self.callback_manager = CallbackManager([self.tracer])
-
         self.tools = [webSearchTool.get_search_tool()] + github_tools + file_tools
         self.model = model.bind_tools(self.tools)
         self.agent_executor = None
@@ -48,63 +49,9 @@ class AgentHandler:
         self.message_store = RedisMessageStore()
     
     def _initialize_agent(self):
+
         """Initialize the agent with all available tools"""
-        prmpt = SystemMessage(content="""
-                You are an intelligent and helpful personal assistant for Sir. You have access to various tools including web search and GitHub integration.
-
-                ## Core Principles
-                - Be concise yet comprehensive
-                - Use tools only when necessary
-                - Extract and synthesize relevant information from tool outputs
-                - Adapt your response style to the query's nature
-
-                ## Tool Usage Guidelines
-                1. **When to use tools:**
-                - For current information (weather, news, prices)
-                - For specific technical information not in your knowledge base
-                - When requested to look up something specific
-                - When you need to verify information
-                - Stop whole process if tools gives errors(maxTrys=2) and say tool error
-
-
-                2. **When NOT to use tools:**
-                - For simple factual questions you can answer directly
-                - For opinions or subjective advice
-                - When the user has indicated no tool use
-
-                3. **Tool output processing:**
-                - Extract only the essential information
-                - Omit URLs, metadata, and technical details unless specifically requested
-                - Synthesize information into a concise, direct response
-                - Do not repeat or quote raw tool output
-
-                ## Response Style
-                - **For tool-based queries:** Provide direct answers without showing your work or the full tool response. Focus only on the requested information.
-                - **For simple queries:** Be brief and direct (e.g., "17 USD is approximately 1,415 Indian Rupees" without showing calculation methods)
-                - **For complex queries:** Organize information logically but remain concise
-                - **Always prioritize clarity and usefulness over verbosity**
-
-                ## Examples
-
-                **Poor response (too verbose):**
-                "I searched the web for the weather in Bangalore and found several results. According to weather.com (URL: https://weather.com/bangalore), the current temperature in Bangalore is 30°C with 65% humidity. There's a 20% chance of rain later today with winds at 12km/h from the southwest."
-
-                **Good response:**
-                "It's currently 30°C in Bangalore with a 20% chance of rain later today."
-
-                **Poor response (showing calculation):**
-                "To convert $17 to Indian Rupees, I need to use the current exchange rate. $1 USD equals approximately 83.24 INR. So $17 × 83.24 = 1,415.08 INR."
-
-                **Good response:**
-                "17 USD is approximately 1,415 Indian Rupees."
-
-                ## Special Instructions
-                - When using GitHub tools, extract only the relevant code snippets, commit information, or repository details requested
-                - Always address the user as "Sir"
-                - For questions requiring your opinion or assessment, clearly indicate this is your analysis
-                - If a tool fails or returns unhelpful information, acknowledge this and try an alternative approach
-                - If you're uncertain about information, acknowledge the limitations rather than providing potentially incorrect information
-        """)
+        prmpt = SystemMessage(content=f'{self.prompt}')
         # self.model = self.model.bind(system_message=system_message)
         self.agent_executor = create_react_agent(self.model, self.tools,prompt=prmpt)
 
@@ -146,7 +93,7 @@ class AgentHandler:
                             "content": response,
                             "timestamp": time.time()
                         })
-                        print(f"AI Response: {response}")
+                        # print(f"AI Response: {response}")
 
             return {"conversation_id": conversation_id, "response": response}
         

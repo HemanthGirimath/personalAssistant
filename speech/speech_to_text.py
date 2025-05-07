@@ -85,7 +85,7 @@ def stream_audio_data_to_google(pause_event):
         if stream and stream.active:
             stream.stop()
             stream.close()
-        print("Audio stream session closed.")
+        # print("Audio stream session closed.")
 
 def stop_stream():
     """Function to properly stop the stream."""
@@ -93,4 +93,4 @@ def stop_stream():
     if stream and stream.active:
         stream.stop()
         stream.close()
-        print("Audio stream stopped and closed.")
+        # print("Audio stream stopped and closed. \n")

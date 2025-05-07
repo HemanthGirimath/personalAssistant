@@ -4,13 +4,14 @@ from features.agents.agentHandler import AgentHandler
 import asyncio
 
 class VoiceInteractionBase:
-    def __init__(self, model_selector=None):
+    def __init__(self, model_selector=None,prompt=None):
         """
         Initialize voice interaction with optional model selector
         """
+        self.prompt = prompt
         self.audio_manager = AudioManager()
         self.model_selector = model_selector
-        self.agent_selector = AgentHandler(model_selector)
+        self.agent_selector = AgentHandler(model_selector,prompt)
  
     async def process_voice_interaction(self, custom_prompt_template=None):
         """

@@ -60,5 +60,5 @@ def synthesize_and_stream_text_to_speech(text):
     audio_stream = io.BytesIO(response.audio_content)
     audio = AudioSegment.from_file(audio_stream, format="mp3")
     play(audio)
-    print("Text-to-Speech completed.")
+    # print("Text-to-Speech completed.")
     return True

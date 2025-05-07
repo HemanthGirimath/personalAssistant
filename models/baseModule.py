@@ -23,7 +23,7 @@ class ModelSelector:
             except Exception as e:
                 print(f"Failed to initialize OpenAI models: {e}")
             try:
-                self.available_models["gemini-1.5-pro"] = self._get_gemini_model("gemini-1.5-pro")
+                self.available_models["models/gemini-2.5-pro-exp-03-25"] = self._get_gemini_model("models/gemini-2.5-pro-exp-03-25")
                 self.available_models["gemini-2.0-flash"] = self._get_gemini_model("gemini-2.0-flash")
                 print("Gemini models initialized successfully")
 
