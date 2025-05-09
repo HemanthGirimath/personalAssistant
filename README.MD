@@ -47,7 +47,7 @@
 | Storage     | Redis (sessions, chat, repo metadata)   |
 | Deployment  | Vercel (frontend UI), Railway (backend) |
 
-## 📸 UI Preview
+
 ## 📸 UI Preview
 <p align="center">
   <img src="images/Screenshot 2025-05-09 at 11.31.03 PM.png" alt="Image 1" width="1000"/>
