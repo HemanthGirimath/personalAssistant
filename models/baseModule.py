@@ -23,7 +23,7 @@ class ModelSelector:
             except Exception as e:
                 print(f"Failed to initialize OpenAI models: {e}")
             try:
-                self.available_models["gemini-1.5-pro"] = self._get_gemini_model("gemini-1.5-pro")
+                self.available_models["models/gemini-2.5-pro-exp-03-25"] = self._get_gemini_model("models/gemini-2.5-pro-exp-03-25")
                 self.available_models["gemini-2.0-flash"] = self._get_gemini_model("gemini-2.0-flash")
                 print("Gemini models initialized successfully")
 
@@ -59,12 +59,12 @@ class ModelSelector:
         """Return list of available models"""
         return list(self.available_models.keys())
     
-    def set_model(self, model_name):
+    def set_model(self, model_name:str):
         """Set current model to use"""
         if model_name in self.available_models:
             self.current_model_name = model_name
             self.current_model = self.available_models[model_name]
-            return f"Model changed to {model_name}"
+            return self.current_model
         else:
             return f"Model {model_name} not found. Available models: {', '.join(self.list_available_models())}"
     

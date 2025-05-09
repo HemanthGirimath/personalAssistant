@@ -18,13 +18,13 @@ class AudioManager:
                 if not transcription or transcription.strip() == "":
                     continue
                     
-                print(f"\nUser said: {transcription}")
-                print("Pausing audio recording...")
+                print(f"\nUser said: {transcription} \n")
+                # print("Pausing audio recording... \n")
                 self.pause_event.set()
                 stop_stream()
                 return transcription
         except KeyboardInterrupt:
-            print("\n🛑 Process interrupted by user. Exiting...")
+            # print("\n🛑 Process interrupted by user. Exiting...")
             self.pause_event.clear()
             stop_stream()
             raise
@@ -32,7 +32,7 @@ class AudioManager:
     async def speakResponse(self,responseText):
         try:
             if responseText:
-                print("converting response to speech...")
+                # print("converting response to speech...")
                 # synthesize_and_stream_text_to_speech(responseText)
                 await asyncio.to_thread(synthesize_and_stream_text_to_speech, responseText)
                 import time
@@ -44,10 +44,10 @@ class AudioManager:
             raise
     
     def resumeListening(self):
-        print("Resuming audio recording...")
+        # print("Resuming audio recording...")
         self.pause_event.clear()
 
     def cleanup(self):
-        print("Cleaning up audio resources...")
+        # print("Cleaning up audio resources...")
         self.pause_event.clear()
         stop_stream()

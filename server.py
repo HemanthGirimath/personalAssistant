@@ -8,16 +8,43 @@ import time
 from typing import Dict, Any
 from models.baseModule import ModelSelector
 from features.Voice.voiceInteractionBase import VoiceInteractionBase
+from features.agents.tools.githubAccess import GitHubTools
 import uuid
+from utils.promptLoader import loadPrompt
 
-import uuid
 
 app = FastAPI()
-model = ModelSelector()
-voice_interaction = VoiceInteractionBase(model.current_model)
 
-@app.get("/try")
-async def hello(request: Request, conversation_id: str = None):
+# Remove global instantiations
+# model = ModelSelector()
+# github = GitHubTools()
+
+# Create holder for lazy initialization
+_model = None
+_github = None
+
+def get_model():
+    global _model
+    if _model is None:
+        _model = ModelSelector()
+    return _model
+
+def get_github():
+    global _github
+    if _github is None:
+        _github = GitHubTools()
+    return _github
+
+@app.get("/agent")
+async def hello(request: Request, conversation_id: str = None, mode:str="general"):
+    model = get_model()
+    if mode == "general":
+        generalPromot = loadPrompt("githubMode.txt")
+        voice_interaction = VoiceInteractionBase(model.set_model("gpt-3.5-turbo"))
+    else:
+        githubPrompt = loadPrompt("githubMode.txt")
+        voice_interaction = VoiceInteractionBase(model.set_model("gemini-2.0-flash"))
+
     use_voice = True
     if use_voice:
         # Generate new conversation_id if not provided
@@ -27,59 +54,32 @@ async def hello(request: Request, conversation_id: str = None):
         result = await voice_interaction.process_agent_voice_interaction(
             conversation_id=conversation_id
         )
-        print("server object : ", result)
+        print("Agent Response : ", result["response"], end='\n\n')
         
         # Return both result and conversation_id
         return {
             "conversation_id": conversation_id,
             "result": result
         }
+    
+@app.get("/repo")
+async def getAllRepo(request:Request):
+    github = get_github()  # Lazy load GitHub when needed
+    ressult = github.get_repo()
+    return ressult
+    
 
+    
 @app.get("/history/{conversation_id}")
 async def get_history(conversation_id: str):
     """Get chat history for a specific conversation"""
     try:
-        history = voice_interaction.agent_handler.get_conversation_history(conversation_id)
+        history = agent.get_conversation_history(conversation_id)
         return {"history": history}
     except Exception as e:
         return {"error": str(e)}
 
-# @app.get("/try")
-# async def hello(request: Request):
-#     use_voice = True
-#     if use_voice:
-#         response_stream = []
-#         async for chunk in voice_interaction.process_agent_voice_interaction():
-#             response_stream.append(chunk)
-#             # If using WebSocket, you can send each chunk to the client here
-            
-#         return {"stream": response_stream , "conversation_id": res }
 
-# @app.post("/execute")
-# async def execute_function(request: Request):
-#     "Execute a function based on the request data."
-#     data = await request.json()
-#     function_name = data.get("function_name")
-#     parameters = data.get("parameters", {})
-
-#     if function_name not in functionRegistry:
-#         return {"error": f"Function {function_name} not found"}
-#     try:
-#         result = functionRegistry[function_name](**parameters)
-#         return {"result": result}
-#     except Exception as e:
-#             return {"error": str(e)}
-    
-# #Endpoint that lists all functions with their specifications
-# @app.get("/functions")
-# async def listFunctions():
-    # specs = {}
-    # for name, func in functionRegistry.items():
-    #     specs[name] = {
-    #         "description": func.__doc__,
-    #         "parameters": getattr(func, "pax    rameters", {})
-    #     }
-    # return specs
 
 def signal_handler(sig, frame):
     print("\nShutting down server gracefully...")

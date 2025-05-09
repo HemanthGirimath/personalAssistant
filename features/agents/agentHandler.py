@@ -7,12 +7,15 @@ from langgraph.prebuilt import create_react_agent
 from langchain_core.messages import HumanMessage, SystemMessage
 from models.baseModule import ModelSelector
 from features.agents.tools.liveSearch import webSearchTool
+from features.agents.tools.githubAccess import github_tools
+from features.agents.tools.files import file_tools
 from langchain_core.messages import AIMessage
 import redis
 import json
 import uuid
 from typing import List, Dict, Optional
 import time
+
 
 class RedisMessageStore:
     def __init__(self):
@@ -34,26 +37,23 @@ class RedisMessageStore:
         return json.loads(messages) if messages else []
 
 class AgentHandler:
-    def __init__(self,model):
+    def __init__(self,model,prompt):
+        self.prompt = prompt
         self.tracer = LangChainTracer(project_name ="personalAssistant")
-        self.tools = [webSearchTool.get_search_tool()]
+        self.callback_manager = CallbackManager([self.tracer])
+        self.tools = [webSearchTool.get_search_tool()] + github_tools + file_tools
         self.model = model.bind_tools(self.tools)
         self.agent_executor = None
-        self.message_store = RedisMessageStore()
-        self.tracer = LangChainTracer(project_name="personal_assistant")
-        self.callback_manager = CallbackManager([self.tracer])
         self._initialize_agent()
 
+        self.message_store = RedisMessageStore()
     
     def _initialize_agent(self):
+
         """Initialize the agent with all available tools"""
-        prmpt = SystemMessage(content="""
-        You are a helpful assistant. Use the chat history to maintain context 
-        and remember important details about the user throughout the conversation.
-        """)
+        prmpt = SystemMessage(content=f'{self.prompt}')
         # self.model = self.model.bind(system_message=system_message)
         self.agent_executor = create_react_agent(self.model, self.tools,prompt=prmpt)
-
 
     async def process_query(self, text: str, conversation_id: Optional[str] = None, **kwargs):
         """Process user query through the agent"""
@@ -93,7 +93,7 @@ class AgentHandler:
                             "content": response,
                             "timestamp": time.time()
                         })
-                        print(f"AI Response: {response}")
+                        # print(f"AI Response: {response}")
 
             return {"conversation_id": conversation_id, "response": response}
         

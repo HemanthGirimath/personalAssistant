@@ -1,18 +1,18 @@
 from speech.audioModule import AudioManager
-from langchain_core.output_parsers import StrOutputParser
+
 from features.agents.agentHandler import AgentHandler
-from langchain_core.messages import AIMessage
 import asyncio
 
 class VoiceInteractionBase:
-    def __init__(self, model_selector=None):
+    def __init__(self, model_selector=None,prompt=None):
         """
         Initialize voice interaction with optional model selector
         """
+        self.prompt = prompt
         self.audio_manager = AudioManager()
         self.model_selector = model_selector
-        self.agent_selector = AgentHandler(model_selector)
-    
+        self.agent_selector = AgentHandler(model_selector,prompt)
+ 
     async def process_voice_interaction(self, custom_prompt_template=None):
         """
         Process a complete voice interaction cycle:
@@ -50,16 +50,7 @@ class VoiceInteractionBase:
         finally:
             self.audio_manager.resumeListening()
 
-
-       
     async def process_agent_voice_interaction(self, conversation_id:str = None):
-        """
-        Process a complete voice interaction cycle:
-        1. Listen for voice input
-        2. Convert to text
-        3. Process with agent
-        4. Convert response to speech
-        """
         try:
             # Get voice input and convert to text
             transcription = self.audio_manager.listenForCommand()
@@ -91,7 +82,6 @@ class VoiceInteractionBase:
             
         finally:
             self.audio_manager.resumeListening()
-
 
     def cleanup(self):
         """Cleanup voice interaction resources"""
