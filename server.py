@@ -70,14 +70,14 @@ async def getAllRepo(request:Request):
     
 
     
-# @app.get("/history/{conversation_id}")
-# async def get_history(conversation_id: str):
-#     """Get chat history for a specific conversation"""
-#     try:
-#         history = agent.get_conversation_history(conversation_id)
-#         return {"history": history}
-#     except Exception as e:
-#         return {"error": str(e)}
+@app.get("/history/{conversation_id}")
+async def get_history(conversation_id: str):
+    """Get chat history for a specific conversation"""
+    try:
+        history = agent.get_conversation_history(conversation_id)
+        return {"history": history}
+    except Exception as e:
+        return {"error": str(e)}
 
 
 
