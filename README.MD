@@ -48,9 +48,18 @@
 | Deployment  | Vercel (frontend UI), Railway (backend) |
 
 ## 📸 UI Preview
+<p align="center">
+  <img src="/Users/hemanthgirimath/personal-projects/images/Screenshot 2025-05-09 at 11.31.03 PM.png" alt="Image 1" width="500"/>
+</p>
 
-> *\[Insert screenshots or GIF of the Notch UI + mic animation + response view]*
-> (You can upload media in the GitHub repo)
+<p align="center">
+  <img src="/Users/hemanthgirimath/personal-projects/images/Screenshot 2025-05-09 at 11.31.14 PM.png" alt="Image 2" width="500"/>
+</p>
+
+<p align="center">
+  <img src="/Users/hemanthgirimath/personal-projects/images/Screenshot 2025-05-09 at 11.31.22 PM.png" alt="Image 3" width="500"/>
+</p>
+
 
 ## 🛠 Setup Instructions
 
