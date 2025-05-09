@@ -50,15 +50,15 @@
 ## 📸 UI Preview
 ## 📸 UI Preview
 <p align="center">
-  <img src="images/Screenshot 2025-05-09 at 11.31.03 PM.png" alt="Image 1" width="500"/>
+  <img src="images/Screenshot 2025-05-09 at 11.31.03 PM.png" alt="Image 1" width="1000"/>
 </p>
 
 <p align="center">
-  <img src="images/Screenshot 2025-05-09 at 11.31.14 PM.png" alt="Image 2" width="500"/>
+  <img src="images/Screenshot 2025-05-09 at 11.31.14 PM.png" alt="Image 2" width="1000"/>
 </p>
 
 <p align="center">
-  <img src="images/Screenshot 2025-05-09 at 11.31.22 PM.png" alt="Image 3" width="500"/>
+  <img src="images/Screenshot 2025-05-09 at 11.31.22 PM.png" alt="Image 3" width="1000s"/>
 </p>
 
 
