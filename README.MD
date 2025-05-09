@@ -1,9 +1,3 @@
-Absolutely — based on everything you've shared, I can create a clear, professional README tailored to your app's purpose, features, and developer audience.
-
-Here’s a draft README structured for GitHub:
-
----
-
 # 🧠 Jarvis Notch — Your Developer Sidekick for GitHub Repos
 
 > A futuristic macOS app with a dynamic, notch-style interface that feels like Jarvis from Iron Man. This AI-powered assistant helps developers understand codebases, answer questions live, and visualize repositories — all with voice or text.
