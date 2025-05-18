@@ -2,6 +2,8 @@
 
 > A futuristic macOS app with a dynamic, notch-style interface that feels like Jarvis from Iron Man. This AI-powered assistant helps developers understand codebases, answer questions live, and visualize repositories — all with voice or text.
 
+UI for the app - https://github.com/HemanthGirimath/perosnalAssistant-front-end-
+
 ## 🚀 Features
 
 * 🎙️ **Voice & Text Interface**
